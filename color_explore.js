@@ -188,7 +188,7 @@ function kMeans(pixels, k) {
         	// Add random point if a cluster is empty
         	for(var i = 0; i < clusters.length; i++){
         		if(clusters[i].length == 0)
-        			clusters[i].push(pixels[Math.floor(data.length * Math.random())])
+        			clusters[i].push(pixels[Math.floor(pixels.length * Math.random())])
         	}
 
         	oldClusters = clusters
