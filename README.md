@@ -9,5 +9,6 @@ A photoshop script to automate color explorations for character design. This scr
 4. Make sure you have your flat color layers in a folder named "Flats". Merge layers that you want to be the same color down to one layer.
 5. Pixel lock (the brush icon beside lock in the layer panel) the layers that you don't want the colors to change. This could be used for skin, eyes, lips, etc.
 6. Select File > Scripts > Browse and click color_explore.js
-7. Enter how many colors you'd like to extract and locate the reference folder from step 2.
-8. The script will create a new flat color folder with new color palette applied. This script only affect normal layers' color. Layers with other blend mode (e.g. multiply/add used for shading) with be left unchanged.
+7. Enter your color extract settings.
+9. Locate your reference folder from step 2.
+10. The script will create a new flat color folder with new color palette applied. This script only affect normal layers' color. Layers with other blend mode (e.g. multiply/add used for shading) with be left unchanged.
