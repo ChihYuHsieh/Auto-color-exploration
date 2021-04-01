@@ -234,7 +234,31 @@ function main() {
         return;
     }
 
-    var k = prompt("Enter the number of colors to extract.", 5);
+    var w = new Window ('dialog', 'Color Extract Settings', undefined, {closeButton: true});
+    w.alignChildren = "right";
+    var panel = w.add("panel")
+    panel.alignChildren = "left"
+    var st = panel.add("statictext", undefined, "Amount of colors to extract:");
+
+    var grp = panel.add("group");
+    grp.alignChildren = "left";
+    var value = grp.add ('edittext {text: 8, characters: 4, justify: "center", active: true}');
+    var slider = grp.add ('slider {minvalue: 1, maxvalue: 15, value: 8}');
+    slider.preferredSize.width = 200;
+    slider.onChanging = function () {value.text = Math.round(slider.value)}
+    value.onChanging = function () {slider.value = Number(value.text);}
+    value.onChange = function () {value.text = Math.round(Number(value.text));}
+
+    var radio1 = panel.add ("radiobutton", undefined, "Directly fill layer with extracted color");
+    var radio2 = panel.add ("radiobutton", undefined, "Preserve luminosity of layer");
+    radio1.value = true;
+
+    w.add('button', undefined, 'OK');
+
+    w.show();
+
+    var k = Number(value.text)
+    var preserveLuminosity = !radio1.value
 
     var referenceFolder = new Folder(Folder.selectDialog("Select folder with reference photos. Accepts \".jpg\" or \".jpeg\"."))
     var referenceFiles = referenceFolder.getFiles("*.jp*g")
@@ -268,11 +292,28 @@ function main() {
         var flatColorLayers = flatColorLayerSets.duplicate().artLayers
         for(var i = 0; i < flatColorLayers.length; i++){
             if (flatColorLayers[i].blendMode == BlendMode.NORMAL && flatColorLayers[i].pixelsLocked == false) {
-                doc.activeLayer = flatColorLayers[i]
-                selectLayerPixels()
-                
-                doc.selection.fill(extractedRGB[i % k])
-                doc.selection.deselect()
+                if(preserveLuminosity){
+                    var currentLayer = flatColorLayers[i]
+                    doc.activeLayer = flatColorLayers[i]
+                    selectLayerPixels()
+                    var colorLayer = flatColorLayers.add()
+                    colorLayer.moveBefore(currentLayer);
+                    
+                    if(!colorLayer.grouped)
+                        colorLayer.grouped = true;
+                    doc.activeLayer = colorLayer
+                    doc.selection.fill(extractedRGB[i % k])
+                    doc.selection.deselect()
+                    colorLayer.blendMode = BlendMode.COLORBLEND
+                    colorLayer.merge();
+                }
+                else {
+                    doc.activeLayer = flatColorLayers[i]
+                    selectLayerPixels()
+                    
+                    doc.selection.fill(extractedRGB[i % k])
+                    doc.selection.deselect()
+                }
             }
         }
 
